@@ -19,7 +19,6 @@ data "hcp_packer_artifact" "tenant1-westus" {
   region         = "eastus" # must specify the region the SIG is deployed to
 
   lifecycle {
-    # The AMI ID must refer to an existing AMI that has the tag "nomad-server".
     postcondition {
       condition     = contains(split(", ", self.labels["sig_replicated_regions"]), "westus")
       error_message = "Bucket Version does not contain a SIG replication in 'westus'"
@@ -44,7 +43,6 @@ data "hcp_packer_artifact" "tenant2-westus" {
   region         = "eastus" # must specify the region the SIG is deployed to
 
   lifecycle {
-    # The AMI ID must refer to an existing AMI that has the tag "nomad-server".
     postcondition {
       condition     = contains(split(", ", self.labels["sig_replicated_regions"]), "westus")
       error_message = "Bucket Version does not contain a SIG replication in 'westus'"
