@@ -4,27 +4,45 @@ locals {
   location     = "eastus"
 }
 
-
-data "hcp_packer_artifact" "tenant1-image" {
+data "hcp_packer_artifact" "tenant1-eastus" {
   bucket_name    = local.bucket_name
   channel_name   = local.channel_name
-  region         = local.location
   platform       = "azure"
   component_type = "azure-arm.azure-ubuntu-tenant01"
+  region         = "eastus"
 }
 
-data "hcp_packer_artifact" "tenant2-image" {
+data "hcp_packer_artifact" "tenant1-westus" {
   bucket_name    = local.bucket_name
   channel_name   = local.channel_name
-  region         = local.location
+  platform       = "azure"
+  component_type = "azure-arm.azure-ubuntu-tenant01"
+  region         = "westus"
+}
+
+
+data "hcp_packer_artifact" "tenant2-eastus" {
+  bucket_name    = local.bucket_name
+  channel_name   = local.channel_name
   platform       = "azure"
   component_type = "azure-arm.azure-ubuntu-tenant02"
+  region         = "eastus"
 }
 
-output "tenant01-image" {
-  value = data.hcp_packer_artifact.tenant1-image.external_identifier
+data "hcp_packer_artifact" "tenant2-westus" {
+  bucket_name    = local.bucket_name
+  channel_name   = local.channel_name
+  platform       = "azure"
+  component_type = "azure-arm.azure-ubuntu-tenant02"
+  region         = "westus"
 }
 
-output "tenant02-image" {
-  value = data.hcp_packer_artifact.tenant2-image.external_identifier
+output "images" {
+  value = {
+    tenant01-eastus = data.hcp_packer_artifact.tenant1-eastus.external_identifier
+    tenant01-westus = data.hcp_packer_artifact.tenant1-westus.external_identifier
+    tenant02-eastus = data.hcp_packer_artifact.tenant2-eastus.external_identifier
+    tenant02-westus = data.hcp_packer_artifact.tenant2-westus.external_identifier
+  }
 }
+
