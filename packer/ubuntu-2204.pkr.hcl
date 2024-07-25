@@ -7,46 +7,6 @@ packer {
   }
 }
 
-# variable "tenant01" {
-#   description = "Credentials for Azure Tenant 1"
-#   type = object(
-#     {
-#       name            = string
-#       tenant_id       = string
-#       subscription_id = string
-#       client_id       = string
-#       client_secret   = string
-#     }
-#   )
-#   default = {
-#     name            = env("t01_ARM_TENANT_NAME")
-#     tenant_id       = env("t01_ARM_TENANT_ID")
-#     subscription_id = env("t01_ARM_SUBSCRIPTION_ID")
-#     client_id       = env("t01_ARM_CLIENT_ID")
-#     client_secret   = env("t01_ARM_CLIENT_SECRET")
-#   }
-# }
-
-# variable "tenant02" {
-#   description = "Credentials for Azure Tenant 1"
-#   type = object(
-#     {
-#       name            = string
-#       tenant_id       = string
-#       subscription_id = string
-#       client_id       = string
-#       client_secret   = string
-#     }
-#   )
-#   default = {
-#     name            = env("t02_ARM_TENANT_NAME")
-#     tenant_id       = env("t02_ARM_TENANT_ID")
-#     subscription_id = env("t02_ARM_SUBSCRIPTION_ID")
-#     client_id       = env("t02_ARM_CLIENT_ID")
-#     client_secret   = env("t02_ARM_CLIENT_SECRET")
-#   }
-# }
-
 variable "tenant_configuration" {
   type = list(object({
     location                          = string # Location to build the image in
@@ -65,31 +25,6 @@ variable "tenant_configuration" {
     error_message = "There must be exactly 2 tenants configurations passed into this template."
   }
 }
-
-# variable "azure_configuration" {
-#   description = ""
-#   type = object(
-#     {
-#       location                  = string
-#       image_resource_group_name = string
-#       # image_gallery_name          = string
-#       # image_regions               = list(string)
-#       # build_resource_group_name   = string
-#       # virtual_network_name        = string
-#       # virtual_network_subnet_name = string
-#     }
-#   )
-#   default = {
-#     location                  = env("ARM_LOCATION")
-#     image_resource_group_name = env("ARM_IMAGE_RESOURCE_GROUP_NAME")
-#     # image_gallery_name          = env("ARM_IMAGE_GALLERY_NAME")
-#     # image_regions               = [""] #env("ARM_IMAGE_GALLERY_REGIONS")
-#     # build_resource_group_name   = env("ARM_VNET_RESOURCE_GROUP_NAME")
-#     # virtual_network_name        = env("ARM_VNET_NAME")
-#     # virtual_network_subnet_name = env("ARM_SUBNET_NAME")
-#   }
-# }
-
 
 locals {
   os_name     = "ubuntu-2204"
