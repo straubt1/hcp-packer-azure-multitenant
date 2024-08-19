@@ -38,7 +38,7 @@ locals {
 
   # 
   azure_image_name = local.bucket_name # join("_", [local.bucket_name, local.os_name])
-  image_version    = "0.0.10"          # must increment for each build
+  image_version    = "0.0.11"          # must increment for each build
 
   common_tags = {
     os         = "ubuntu"
@@ -54,7 +54,7 @@ locals {
 }
 
 
-source "azure-arm" "sigtenant1-237fbc04-c52a-458b-af97-eaf7157c0cd4" {
+source "azure-arm" "sigtenant1" {
   tenant_id       = var.tenant_configuration[0].tenant_id
   subscription_id = var.tenant_configuration[0].subscription_id
   client_id       = var.tenant_configuration[0].client_id
@@ -83,7 +83,7 @@ source "azure-arm" "sigtenant1-237fbc04-c52a-458b-af97-eaf7157c0cd4" {
   # }
 }
 
-source "azure-arm" "sigtenant22-237fbc04-c52a-458b-af97-eaf7157c0cd4" {
+source "azure-arm" "sigtenant22" {
   tenant_id       = var.tenant_configuration[1].tenant_id
   subscription_id = var.tenant_configuration[1].subscription_id
   client_id       = var.tenant_configuration[1].client_id
@@ -126,7 +126,7 @@ build {
     for_each = var.tenant_configuration
 
     labels = [
-      "azure-arm.${source.value.image_gallery_name}-${source.value.tenant_id}" # This must match the source declared above
+      "azure-arm.${source.value.image_gallery_name}" # This must match the source declared above
     ]
 
     content {
