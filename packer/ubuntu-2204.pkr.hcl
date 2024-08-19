@@ -38,7 +38,7 @@ locals {
 
   # 
   azure_image_name = local.bucket_name # join("_", [local.bucket_name, local.os_name])
-  image_version    = "0.0.5"           # must increment for each build
+  image_version    = "0.0.10"          # must increment for each build
 
   common_tags = {
     os         = "ubuntu"
@@ -54,7 +54,7 @@ locals {
 }
 
 
-source "azure-arm" "ubuntu-t01" {
+source "azure-arm" "sigtenant1-237fbc04-c52a-458b-af97-eaf7157c0cd4" {
   tenant_id       = var.tenant_configuration[0].tenant_id
   subscription_id = var.tenant_configuration[0].subscription_id
   client_id       = var.tenant_configuration[0].client_id
@@ -73,17 +73,17 @@ source "azure-arm" "ubuntu-t01" {
 
   azure_tags = local.common_tags
 
-  shared_image_gallery_destination {
-    subscription        = var.tenant_configuration[0].subscription_id
-    resource_group      = var.tenant_configuration[0].image_gallery_resource_group_name
-    gallery_name        = var.tenant_configuration[0].image_gallery_name
-    replication_regions = var.tenant_configuration[0].image_regions
-    image_name          = local.azure_image_name
-    image_version       = local.image_version
-  }
+  # shared_image_gallery_destination {
+  #   subscription        = var.tenant_configuration[0].subscription_id
+  #   resource_group      = var.tenant_configuration[0].image_gallery_resource_group_name
+  #   gallery_name        = var.tenant_configuration[0].image_gallery_name
+  #   replication_regions = var.tenant_configuration[0].image_regions
+  #   image_name          = local.azure_image_name
+  #   image_version       = local.image_version
+  # }
 }
 
-source "azure-arm" "ubuntu-t02" {
+source "azure-arm" "sigtenant22-237fbc04-c52a-458b-af97-eaf7157c0cd4" {
   tenant_id       = var.tenant_configuration[1].tenant_id
   subscription_id = var.tenant_configuration[1].subscription_id
   client_id       = var.tenant_configuration[1].client_id
@@ -102,14 +102,14 @@ source "azure-arm" "ubuntu-t02" {
 
   azure_tags = local.common_tags
 
-  shared_image_gallery_destination {
-    subscription        = var.tenant_configuration[1].subscription_id
-    resource_group      = var.tenant_configuration[1].image_gallery_resource_group_name
-    gallery_name        = var.tenant_configuration[1].image_gallery_name
-    replication_regions = var.tenant_configuration[1].image_regions
-    image_name          = local.azure_image_name
-    image_version       = local.image_version
-  }
+  # shared_image_gallery_destination {
+  #   subscription        = var.tenant_configuration[1].subscription_id
+  #   resource_group      = var.tenant_configuration[1].image_gallery_resource_group_name
+  #   gallery_name        = var.tenant_configuration[1].image_gallery_name
+  #   replication_regions = var.tenant_configuration[1].image_regions
+  #   image_name          = local.azure_image_name
+  #   image_version       = local.image_version
+  # }
 }
 
 build {
@@ -122,17 +122,30 @@ build {
     build_labels  = local.build_tags
   }
 
-  # This source will create the image in Tenant 1
-  # with the component_type "azure-arm.azure-ubuntu-tenant01"
-  source "source.azure-arm.ubuntu-t01" {
-    name = "azure-ubuntu-tenant01" # must be string literal
-    # managed_image_name = join("_", [local.bucket_name, "azure", local.os_name, "tenant01"])
+  dynamic "source" {
+    for_each = var.tenant_configuration
+
+    labels = [
+      "azure-arm.${source.value.image_gallery_name}-${source.value.tenant_id}" # This must match the source declared above
+    ]
+
+    content {
+      name               = "${source.value.image_gallery_name}-${source.value.tenant_id}" # This can be set to whatever you want to reference via "component_type"
+      managed_image_name = join("_", ["azure", local.os_name, source.value.image_gallery_name, local.image_version])
+    }
   }
 
-  # This source will create the image in Tenant 2
-  # with the component_type "azure-arm.azure-ubuntu-tenant02"
-  source "source.azure-arm.ubuntu-t02" {
-    name = "azure-ubuntu-tenant02" # must be string literal
-    # managed_image_name = join("_", [local.bucket_name, "azure", local.os_name, "tenant02"])
-  }
+  # # This source will create the image in Tenant 1
+  # # with the component_type "azure-arm.azure-ubuntu-tenant01"
+  # source "source.azure-arm.ubuntu-t01" {
+  #   # name = "azure-ubuntu-tenant01" # must be string literal
+  #   managed_image_name = join("_", [local.bucket_name, "azure", local.os_name, "tenant01"])
+  # }
+
+  # # This source will create the image in Tenant 2
+  # # with the component_type "azure-arm.azure-ubuntu-tenant02"
+  # source "source.azure-arm.ubuntu-t02" {
+  #   name = "azure-ubuntu-tenant02" # must be string literal
+  #   # managed_image_name = join("_", [local.bucket_name, "azure", local.os_name, "tenant02"])
+  # }
 }
